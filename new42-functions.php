@@ -275,15 +275,28 @@ function update_clean_title_for_all_resources() {
           $post_title = get_the_title($post_id);
           // Strip HTML tags from the title
           $clean_title = wp_strip_all_tags($post_title);
-          // Update the ACF field 'clean_title'
-          update_field('clean_title', $clean_title, $post_id);
+          
+          // Check if update_field function exists before calling it
+          if (function_exists('update_field')) {
+              // Update the ACF field 'clean_title'
+              update_field('clean_title', $clean_title, $post_id);
+          } else {
+              // Optional: Add error handling if needed, e.g., logging
+              error_log('ACF function update_field not found, unable to update clean_title for post ID: ' . $post_id);
+          }
       }
   }
   wp_reset_postdata();
 }
 
+
 // Run this function once to update all existing resources
 add_action('init', 'update_clean_title_for_all_resources');
 
+//Remove admin bar styling
+function custom_remove_admin_bar_css() {
+  wp_deregister_style('admin-bar');
+}
+add_action('wp_enqueue_scripts', 'custom_remove_admin_bar_css', 11);
 
 ?>
